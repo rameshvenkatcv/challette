@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: script
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: script
+  template:
+    metadata:
+      labels:
+        app: script
+    spec:
+      subdomain: rest-api
+      imagePullSecrets:
+      - name: dockercred
+      containers:
+      - name: restapi
+        resources:
+        image: 928552728292.dkr.ecr.us-east-2.amazonaws.com/spinnaker:restapiV0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: script
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: script
